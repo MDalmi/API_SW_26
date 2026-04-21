@@ -1,112 +1,101 @@
-const livroService = require("../services/livroService");
-
+const pedidoService = require("../services/orderService");
 
 // =============================================
-// Listar todos os livros
+// Listar todos os pedidos
 // =============================================
-function listar(req, res, next) {
+async function listar(req, res, next) {
   try {
-    const livros = livroService.buscarTodos();
-    return res.status(200).json(livros);
-  } catch (erro) {
-    return next(erro);
-  }
-}
+    const pedidos = await pedidoService.buscarTodos();
 
-// =============================================
-// Buscar um livro por ID
-// =============================================
-function buscarPorId(req, res, next) {
-  try {
-    const id = parseInt(req.params.id);
-    const livro = livroService.buscarPorId(id);
-
-    return res.status(200).json(livro || {});
-  } catch (erro) {
-    return next(erro);
-  }
-}
-
-// =============================================
-// Criar um novo livro
-// =============================================
-function criar(req, res, next) {
-  try {
-    const dados = req.body;
-
-    if (!dados.titulo || !dados.autor || dados.preco === undefined) {
-      return res.status(400).json({
-        sucesso: false,
-        mensagem: "Os campos 'titulo', 'autor' e 'preco' são obrigatórios",
-      });
-    }
-
-    const novoLivro = livroService.criar(dados);
-
-    return res.status(200).json(novoLivro);
-  } catch (erro) {
-    return next(erro);
-  }
-}
-
-// =============================================
-// Atualizar um livro existente
-// =============================================
-function atualizar(req, res, next) {
-  try {
-    const id = parseInt(req.body.id);
-    const dados = req.body;
-
-    const livroAtualizado = livroService.atualizar(id, dados);
-
-    if (!livroAtualizado) {
+    if(!pedidos || pedidos.length === 0) {
       return res.status(404).json({
         sucesso: false,
-        mensagem: "Livro com id " + id + " não encontrado para atualização",
+        mensagem: "Nenhum pedido encontrado.",
+      });
+    }
+    
+    return res.status(200).json(pedidos);
+  } catch (erro) {
+    return next(erro);
+  }
+}
+
+// =============================================
+// Buscar um pedido por ID
+// =============================================
+async function buscarPorId(req, res, next) {
+  try {
+    const id = parseInt(req.params.id);
+    const pedido = await pedidoService.buscarPorId(id);
+    if(!pedido) {
+      return res.status(404).json({
+        sucesso: false,
+        mensagem: `Pedido ${id} não encontrado.`,
+      });
+    }
+    return res.status(200).json(pedido || {});
+  } catch (erro) {
+    return next(erro);
+  }
+}
+
+// =============================================
+// Criar um novo pedido
+// =============================================
+
+async function criar(req, res, next) {
+  try {
+    const dados = req.body;
+    const id_usuario = req.user.sub;
+    if (dados.total < 0 || id_usuario !== dados.id_usuario) {
+      return res.status(400).json({
+        sucesso: false,
+        mensagem: "Dados inválidos para criação do pedido.",
       });
     }
 
-    return res.status(200).json(livroAtualizado);
+    const novoPedido = await pedidoService.criar(dados);
+    return res.status(201).json(novoPedido);
   } catch (erro) {
     return next(erro);
   }
 }
 
 // =============================================
-// Remover um livro
+// Atualizar um pedido 
 // =============================================
-function remover(req, res, next) {
+async function atualizar(req, res, next) {
   try {
-    livroDAO.limparTudo();
+    const id = parseInt(req.params.id); // ID via URL params
+    const dados = req.body;
 
-    return res.status(200).json({
-      mensagem: "Livros removidos com sucesso.",
-    });
-  } catch (erro) {
-    return next(erro);
-  }
-}
+    const pedidoAtualizado = await pedidoService.atualizar(id, dados);
 
-// =============================================
-// Buscar resumo de um livro
-// =============================================
-function buscarResumo(req, res, next) {
-  try {
-    const id = parseInt(req.params.id);
-    const livro = livroService.buscarPorId(id);
-
-    if (!livro) {
-      return res.status(404).send("Livro não encontrado");
+    if (!pedidoAtualizado) {
+      return res.status(404).json({ 
+        sucesso: false,
+        mensagem: `Pedido ${id} não encontrado.`,
+      });
     }
 
-    res.send(
-      "titulo: " +
-        livro.titulo +
-        ", autor: " +
-        livro.autor +
-        ", preco: " +
-        livro.preco
-    );
+    return res.status(200).json(pedidoAtualizado);
+  } catch (erro) {
+    return next(erro);
+  }
+}
+// =============================================
+// Remover um pedido específico 
+// =============================================
+async function remover(req, res, next) {
+  try {
+    const id = parseInt(req.params.id);
+    const removido = await pedidoService.remover(id);
+
+    if (!removido) {
+      return res.status(404).json({ mensagem: "Pedido não encontrado." });
+    }
+
+    return res.status(200).json({ mensagem: "Pedido removido com sucesso." });
   } catch (erro) {
     return next(erro);
   }
@@ -118,5 +107,4 @@ module.exports = {
   criar: criar,
   atualizar: atualizar,
   remover: remover,
-  buscarResumo: buscarResumo,
 };
