@@ -1,6 +1,4 @@
-// services/orderService.js — Lógica de negócio do recurso orders (pedidos)
-
-const OrderDAO = require("../orderDAO");
+const OrderDAO = require("../dao/orderDAO");
 // =============================================
 // Buscar todos os pedidos
 // =============================================
@@ -20,9 +18,8 @@ async function buscarPorId(id) {
 // =============================================
 async function criar(dados) {
   const novoPedido = {
-    cliente: dados.cliente,
-    itens: dados.itens,
-    total: dados.total,
+    id_usuario: dados.id_usuario, // Alinhado com o banco e o seu Controller
+    total: dados.total
   };
 
   if (!novoPedido.cliente || !novoPedido.itens ||  novoPedido.total < 0) {

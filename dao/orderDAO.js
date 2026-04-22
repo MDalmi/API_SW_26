@@ -1,4 +1,4 @@
-const Order = require('../models/Pedido'); // Seu modelo Sequelize
+const Order = require('../models/order'); // Seu modelo Sequelize
 // =============================================
 // Operações de Acesso a Dados
 // =============================================

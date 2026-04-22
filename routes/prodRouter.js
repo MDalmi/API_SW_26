@@ -1,12 +1,13 @@
 const { Router } = require("express");
+const { authenticateToken, authorizeRoles } = require("../middlewares/authMiddleware");
 const productController = require("../controllers/productController");
 const router = Router();
 
 // Busca todos os produtos
-router.get("/", productController.getAllProducts);
+router.get("/", productController.listar);
 
 // Busca um produto por ID
-router.get("/:id", productController.getProductById);
+router.get("/:id", productController.buscarPorId);
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ router.get("/:id", productController.getProductById);
  * summary: Cadastra um novo item na padaria
  * tags: [Produtos]
  * security:
- * - bearerAuth: [] # Indica que esta rota exige JWT [cite: 649, 650]
+ * - bearerAuth: [] # Indica que esta rota exige JWT 
  * requestBody:
  * required: true
  * content:
@@ -27,20 +28,23 @@ router.get("/:id", productController.getProductById);
  * preco: { type: number }
  * responses:
  * 201:
- * description: Produto criado com sucesso [cite: 658, 659]
+ * description: Produto criado com sucesso 
  * 401:
- * description: Token ausente ou inválido [cite: 660, 661]
+ * description: Token ausente ou inválido]
  * 403:
- * description: Permissão insuficiente (apenas admin) [cite: 662, 663]
+ * description: Permissão insuficiente (apenas admin)
  */
-router.post("/", productController.createProduct);
+router.post("/", authenticateToken, authorizeRoles("admin"), productController.criar);
 
 // Alterar um produto por ID
-router.put("/:id", productController.updateProduct);
+router.put("/:id", authenticateToken, authorizeRoles("admin"), productController.atualizar);
 
 // Apagar um produto por ID
-router.delete("/:id", productController.deleteProduct);
+router.delete("/:id", authenticateToken, authorizeRoles("admin"), productController.remover);
 
 module.exports = router;
 
 
+
+
+module.exports = router;

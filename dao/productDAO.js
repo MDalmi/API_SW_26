@@ -1,4 +1,4 @@
-const Product = require('../models/Produto'); // Seu modelo Sequelize
+const Product = require('../models/product'); // Seu modelo Sequelize
 // =============================================
 // Operações de Acesso a Dados
 // =============================================

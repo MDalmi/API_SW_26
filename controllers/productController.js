@@ -108,5 +108,4 @@ module.exports = {
     criar: criar,
     atualizar: atualizar,
     remover: remover,
-    buscarResumo: buscarResumo,
 };

@@ -1,17 +1,18 @@
 const { Router } = require("express");
 const orderController = require("../controllers/orderController");
+const { authenticateToken, authorizeRoles } = require("../middlewares/authMiddleware");
 const router = Router();
 
 // Busca todos os pedidos com filtros opcionais (status, data, cliente)
-router.get("/", orderController.getAllOrders);
+router.get("/", authenticateToken, authorizeRoles("admin"), orderController.listar);
 
 // Busca um pedido por ID
-router.get("/:id", orderController.getOrderById);
+router.get("/:id", authenticateToken, orderController.buscarPorId);
 
 // Cria um novo pedido
-router.post("/", orderController.createOrder);
+router.post("/", authenticateToken,  orderController.criar);
 
 // Altera pedido para "entrege" ou "cancelado"
-router.put("/:id", orderController.updateOrder);
+router.put("/:id", authenticateToken, authorizeRoles("admin"),  orderController.atualizar);
 
 module.exports = router;

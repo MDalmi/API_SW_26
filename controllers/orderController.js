@@ -47,14 +47,16 @@ async function criar(req, res, next) {
   try {
     const dados = req.body;
     const id_usuario = req.user.sub;
-    if (dados.total < 0 || id_usuario !== dados.id_usuario) {
+    if (dados.total < 0) {
       return res.status(400).json({
         sucesso: false,
         mensagem: "Dados inválidos para criação do pedido.",
       });
     }
 
-    const novoPedido = await pedidoService.criar(dados);
+    const dadosCompletos = { ...dados, id_usuario: id_usuario };
+
+    const novoPedido = await pedidoService.criar(dadosCompletos);
     return res.status(201).json(novoPedido);
   } catch (erro) {
     return next(erro);
