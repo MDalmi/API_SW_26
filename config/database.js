@@ -1,14 +1,16 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config(); // Garante que o app leia o .env
+require('dotenv').config();
+
+const isLocalhost = process.env.DATABASE_URL.includes('localhost');
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: 'postgres',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false // Isso é OBRIGATÓRIO para bancos em nuvem como o Neon
+    dialect: 'postgres',
+    dialectOptions: isLocalhost ? {} : {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
     }
-  }
 });
 
 module.exports = sequelize;

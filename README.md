@@ -121,5 +121,3 @@ A separação de conceitos (**Separation of Concerns**) foi aplicada com o padr�
 Essa arquitetura facilita manutenção e testes. Uma eventual migração do Sequelize para o Prisma, por exemplo, impactaria **exclusivamente** os arquivos DAO, sem quebrar a lógica de negócio ou as rotas da API.
 
 ---
-
-<p align="center">Desenvolvido com ☕ e 🍞</p>
