@@ -3,18 +3,18 @@ const bcrypt = require("bcrypt");
 const userService = require("./userService");
 
 async function autenticar(email, password) {
-  // 1. Busca usuário
+  // Busca usuário
   const user = await userService.findUserByEmail(email);
   if (!user) return null;
 
-  // 2. Compara senha (bcrypt) [cite: 91, 218]
+  // Compara senha (bcrypt) 
   const senhaValida = await bcrypt.compare(password, user.senha);
   if (!senhaValida) return null;
 
-  // 3. Gera Payload e Token [cite: 219, 282]
+  // Gera Payload e Token
   const payload = { 
     sub: user.id, 
-    role: user.flag_perm // Usando o seu campo de permissão
+    role: user.flag_perm 
   };
 
   const token = jwt.sign(payload, process.env.JWT_SECRET, {

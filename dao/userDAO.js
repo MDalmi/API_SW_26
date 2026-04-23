@@ -4,6 +4,8 @@ const User = require('../models/user'); // Seu modelo Sequelize
 // =============================================
 class UserDAO {
 
+    
+
     async buscarTodos() {
     return await User.findAll();
     }
@@ -12,12 +14,8 @@ class UserDAO {
         return await User.findByPk(id);
     }
 
-    async inserir(dadosUser) {
-        return await User.create({
-                nome: dadosUser.nome,
-                email: dadosUser.email,
-                senha: dadosUser.senha
-            });
+   async inserir(dadosUser) {
+        return await User.create(dadosUser);
     }
 
     async atualizar(id, dadosAtualizados) {
@@ -30,6 +28,12 @@ class UserDAO {
         const user = await User.findByPk(id);
         await user.destroy();
         return user;
+    }
+
+    async buscarPorEmail(email) {
+        return await User.findOne({
+            where: { email: email }
+        });
     }
 
 }

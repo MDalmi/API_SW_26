@@ -19,9 +19,9 @@ const Usuario = sequelize.define('Usuario', {
     },
     senha: {
         type: DataTypes.STRING,
-        allowNull: false // Armazenará o hash do bcrypt 
+        allowNull: false 
     },
-    role: {
+    flag_perm: {
         type: DataTypes.STRING,
         defaultValue: 'cliente' // 'admin' para o dono da padaria
     }

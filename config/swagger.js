@@ -11,7 +11,7 @@ const swaggerOptions = {
     servers: [{ url: 'http://localhost:3000' }],
     components: {
       securitySchemes: {
-        bearerAuth: { // Configuração exigida para a Etapa 4 [cite: 628, 629]
+        bearerAuth: { 
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
@@ -19,7 +19,7 @@ const swaggerOptions = {
       }
     }
   },
-  apis: ['./src/routes/*.js'], // Caminho onde o Swagger buscará as anotações
+  apis: ['./routes/*.js'], 
 };
 
 module.exports = swaggerJsDoc(swaggerOptions);

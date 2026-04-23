@@ -5,6 +5,7 @@ const rotas = require('./routes/index');
 const errorHandler = require('./middlewares/erroHandler');
 
 const app = express();
+app.use(express.json());
 app.use('/api', rotas);
 // Rota para a documentação 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
