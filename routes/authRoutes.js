@@ -29,6 +29,9 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/LoginResponse'
+ *             examples:
+ *               loginSucesso:
+ *                 $ref: '#/components/examples/LoginResponseExample'
  *       400:
  *         description: Campos obrigatórios ausentes
  *       401:

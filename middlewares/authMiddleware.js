@@ -40,11 +40,12 @@ function authenticateToken(req, res, next) {
 }
 
 
- //Deve ser usado APÓS o authenticateToken 
+
 function authorizeRoles(...allowedRoles) {
     return (req, res, next) => {
-        // Verifica se o usuário logado tem o papel permitido
-        if (!req.user || !allowedRoles.includes(req.user.role)) {
+        
+        const userRole = req.user && (req.user.role || req.user.flag_perm);
+        if (!req.user || !userRole || !allowedRoles.includes(userRole)) {
             return res.status(403).json({
                 sucesso: false,
                 error: "Acesso negado. Permissão insuficiente para esta operação.",

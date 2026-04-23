@@ -46,6 +46,9 @@ const router = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Pedido'
+ *             examples:
+ *               pedidosLista:
+ *                 $ref: '#/components/examples/PedidoExample'
  *       401:
  *         description: Token não fornecido ou inválido
  *       403:

@@ -78,6 +78,7 @@ const router = Router();
  *     summary: Lista todos os produtos
  *     description: Retorna uma lista paginada de produtos disponíveis.
  *     tags: [Produtos]
+ *     security: []
  *     responses:
  *       200:
  *         description: Lista de produtos retornada com sucesso
@@ -87,6 +88,9 @@ const router = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Produto'
+ *             examples:
+ *               produtoLista:
+ *                 $ref: '#/components/examples/ProdutoExample'
  *       404:
  *         description: Nenhum produto encontrado
  *   post:
@@ -108,6 +112,9 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Produto'
+ *             examples:
+ *               produtoCriado:
+ *                 $ref: '#/components/examples/ProdutoExample'
  *       400:
  *         description: Dados inválidos para criação
  *       401:
@@ -123,6 +130,7 @@ router.post("/", authenticateToken, authorizeRoles("admin"), productController.c
  *     summary: Busca produto por ID
  *     description: Retorna os detalhes de um produto específico.
  *     tags: [Produtos]
+ *     security: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -137,6 +145,9 @@ router.post("/", authenticateToken, authorizeRoles("admin"), productController.c
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Produto'
+ *             examples:
+ *               produtoExemplo:
+ *                 $ref: '#/components/examples/ProdutoExample'
  *       404:
  *         description: Produto não encontrado
  *   put:
@@ -165,6 +176,9 @@ router.post("/", authenticateToken, authorizeRoles("admin"), productController.c
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Produto'
+ *             examples:
+ *               produtoAtualizado:
+ *                 $ref: '#/components/examples/ProdutoExample'
  *       400:
  *         description: Dados inválidos para atualização
  *       401:
