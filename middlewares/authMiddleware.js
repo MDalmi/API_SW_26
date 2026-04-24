@@ -19,7 +19,7 @@ function authenticateToken(req, res, next) {
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         
         if (err) {
-            // 4. Diferencia erro de expiração para melhor feedback 
+           
             if (err.name === "TokenExpiredError") {
                 return res.status(401).json({
                     sucesso: false,

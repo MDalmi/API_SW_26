@@ -5,15 +5,24 @@ const pedidoService = require("../services/orderService");
 // =============================================
 async function listar(req, res, next) {
   try {
-    const pedidos = await pedidoService.buscarTodos();
+    const filtros = {
+      status:  req.query.status  || null,
+      data:    req.query.data    || null, 
+      cliente: req.query.cliente || null,
+    };
 
-    if(!pedidos || pedidos.length === 0) {
+    // Remove filtros vazios
+    Object.keys(filtros).forEach(k => !filtros[k] && delete filtros[k]);
+
+    const pedidos = await pedidoService.buscarTodos(filtros);
+
+    if (!pedidos || pedidos.length === 0) {
       return res.status(404).json({
         sucesso: false,
         mensagem: "Nenhum pedido encontrado.",
       });
     }
-    
+
     return res.status(200).json(pedidos);
   } catch (erro) {
     return next(erro);

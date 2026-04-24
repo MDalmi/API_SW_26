@@ -1,38 +1,37 @@
-const Product = require('../models/product'); // Seu modelo Sequelize
-// =============================================
-// Operações de Acesso a Dados
-// =============================================
+const { Produto } = require('../models/index'); 
+
 class ProductDAO {
 
-    async buscarTodos() {
-    return await Product.findAll();
-    }
+  async buscarTodos() {
+    return await Produto.findAll();
+  }
 
-    async buscarPorId(id) {
-        return await Product.findByPk(id);
-    }
+  async buscarPorId(id) {
+    return await Produto.findByPk(id);
+  }
 
-    async inserir(dadosProduct) {
-        return await Product.create({
-                nome: dadosProduct.nome,
-                preco: dadosProduct.preco,
-                descricao: dadosProduct.descricao,
-                estoque: dadosProduct.estoque
-            });
-    }
+  async inserir(dadosProduto) {
+    return await Produto.create({
+      nome: dadosProduto.nome,
+      preco: dadosProduto.preco,
+      descricao: dadosProduto.descricao,
+      estoque: dadosProduto.estoque,
+    });
+  }
 
-    async atualizar(id, dadosAtualizados) {
-        const product = await Product.findByPk(id);
-        await product.update(dadosAtualizados);
-        return await product;
-    }
+  async atualizar(id, dadosAtualizados) {
+    const produto = await Produto.findByPk(id);
+    if (!produto) return null;
+    await produto.update(dadosAtualizados);
+    return produto;
+  }
 
-    async remover(id) {
-        const product = await Product.findByPk(id);
-        await product.destroy();
-        return product;
-    }
-
+  async remover(id) {
+    const produto = await Produto.findByPk(id);
+    if (!produto) return null;
+    await produto.destroy();
+    return produto;
+  }
 }
 
 module.exports = new ProductDAO();

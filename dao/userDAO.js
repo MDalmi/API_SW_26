@@ -1,4 +1,4 @@
-const User = require('../models/user'); // Seu modelo Sequelize
+const User = require('../models/user');
 // =============================================
 // Operações de Acesso a Dados
 // =============================================

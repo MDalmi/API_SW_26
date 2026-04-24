@@ -1,9 +1,11 @@
 const OrderDAO = require("../dao/orderDAO");
+const ProductDAO = require("../dao/productDAO");
+
 // =============================================
 // Buscar todos os pedidos
 // =============================================
-async function buscarTodos() {
-  return await OrderDAO.buscarTodos();
+async function buscarTodos(filtros = {}) {
+  return await OrderDAO.buscarTodos(filtros);
 }
 
 // =============================================
@@ -17,36 +19,51 @@ async function buscarPorId(id) {
 // Criar um novo pedido
 // =============================================
 async function criar(dados) {
-  const novoPedido = {
-    id_usuario: dados.id_usuario, // Alinhado com o banco e o seu Controller
-    total: dados.total
-  };
-
-  if (!novoPedido.cliente || !novoPedido.itens ||  novoPedido.total < 0) {
-    return null;
+  if (!dados.itens || dados.itens.length === 0) {
+    throw new Error("O pedido deve conter ao menos um item.");
   }
 
-  return await OrderDAO.inserir(novoPedido);
+  let total = 0;
+
+  for (const item of dados.itens) {
+    if (!item.produtoId || item.quantidade <= 0) {
+      throw new Error("Item inválido: produtoId e quantidade são obrigatórios.");
+    }
+
+    const produto = await ProductDAO.buscarPorId(item.produtoId); 
+
+    if (!produto) {
+      throw new Error(`Produto ${item.produtoId} não encontrado.`);
+    }
+
+    total += produto.preco * item.quantidade;
+  }
+
+  return await OrderDAO.inserir({
+    id_usuario: dados.id_usuario,
+    total: parseFloat(total.toFixed(2)), 
+    status: "pendente",
+  });
 }
 
 // =============================================
-// Atualizar um pedido existente
+// Atualizar status de um pedido
 // =============================================
 async function atualizar(id, dados) {
   const pedidoExistente = await OrderDAO.buscarPorId(id);
 
-  if (!pedidoExistente) {
-    return null;
+  if (!pedidoExistente) return null;
+
+  const statusValidos = ["entregue", "cancelado"];
+  if (!statusValidos.includes(dados.status)) {
+    throw new Error(`Status inválido. Use: ${statusValidos.join(" ou ")}.`);
   }
 
-    const dadosAtualizados = {
-    cliente: dados.cliente || pedidoExistente.cliente,
-    itens: dados.itens || pedidoExistente.itens,
-    total: dados.total !== undefined ? dados.total : pedidoExistente.total,
-    };
+  if (pedidoExistente.status === "entregue") {
+    throw new Error("Pedidos já entregues não podem ser alterados.");
+  }
 
-  
-    return await OrderDAO.atualizar(id, dadosAtualizados);
+  return await OrderDAO.atualizar(id, { status: dados.status });
 }
 
 // =============================================
@@ -54,18 +71,14 @@ async function atualizar(id, dados) {
 // =============================================
 async function remover(id) {
   const pedidoExistente = await OrderDAO.buscarPorId(id);
-
-  if (!pedidoExistente) {
-    return null;
-  }
-
+  if (!pedidoExistente) return null;
   return await OrderDAO.remover(id);
 }
 
 module.exports = {
-  buscarTodos: buscarTodos,
-  buscarPorId: buscarPorId,
-  criar: criar,
-  atualizar: atualizar,
-  remover: remover,
+  buscarTodos,
+  buscarPorId,
+  criar,
+  atualizar,
+  remover,
 };

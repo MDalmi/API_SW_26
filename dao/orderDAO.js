@@ -1,39 +1,54 @@
-const Order = require('../models/order'); // Seu modelo Sequelize
-// =============================================
-// Operações de Acesso a Dados
-// =============================================
+const { Pedido, Produto } = require('../models/index'); // ← era require('../models/order')
 
 class OrderDAO {
 
-    async buscarTodos() {
-    return await Order.findAll();
+  async buscarTodos(filtros = {}) {
+    const where = {};
+
+    if (filtros.status) {
+      where.status = filtros.status;
     }
 
-
-    async buscarPorId(id) {
-     return await Order.findByPk(id);
+    if (filtros.data) {
+      const inicio = new Date(filtros.data);
+      const fim = new Date(filtros.data);
+      fim.setHours(23, 59, 59, 999);
+      where.data_pedido = { [Op.between]: [inicio, fim] };
     }
 
-    async inserir(dadosOrder) {
-    return await Order.create({
-            id_usuario: dadosOrder.id_usuario,
-            total: dadosOrder.total,
-            status: 'pendente'
-        });
+    if (filtros.cliente) {
+      where.id_usuario = filtros.cliente;
     }
 
-    async atualizar(id, dadosAtualizados) {
-        const order = await Order.findByPk(id);
-        await order.update(dadosAtualizados);
-        return await order;
-    }
+    return await Pedido.findAll({ where });
+  }
 
-        async remover(id) {
-        const order = await Order.findByPk(id);
-        await order.destroy();
-        return order;
-    }
 
+  async buscarPorId(id) {
+    return await Pedido.findByPk(id);
+  }
+
+  async inserir(dadosOrder) {
+    return await Pedido.create({
+      id_usuario: dadosOrder.id_usuario,
+      total: dadosOrder.total,
+      status: 'pendente',
+    });
+  }
+
+  async atualizar(id, dadosAtualizados) {
+    const pedido = await Pedido.findByPk(id);
+    if (!pedido) return null;
+    await pedido.update(dadosAtualizados);
+    return pedido;
+  }
+
+  async remover(id) {
+    const pedido = await Pedido.findByPk(id);
+    if (!pedido) return null;
+    await pedido.destroy();
+    return pedido;
+  }
 }
 
 module.exports = new OrderDAO();
